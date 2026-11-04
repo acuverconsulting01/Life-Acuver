@@ -1,0 +1,384 @@
+<title>Ganesha 2025 at Acuver</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Life at Acuver: the afternoon our team shaped eco-friendly clay Ganesha idols in the office, 21 August 2025.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a clock-driven story. Hero photo of the finished idols, then a time scrubber
+   through the afternoon, a lump-to-idol reveal, and a gallery with a lightbox. */
+:root{
+  --bg:#FFFCF4;          /* paper, faintly marigold */
+  --surface:#F6EFDF;     /* newspaper-on-floor tone */
+  --ink:#1C1A3A;         /* Acuver indigo */
+  --muted:#5D5970;
+  --line:#E4DAC4;
+  --marigold:#E8A202;    /* the yellow wall */
+  --marigold-ink:#8A5C00;
+  --clay:#7B4A2E;        /* shadu clay */
+  --on-accent:#1C1A3A;
+  --shadow:0 18px 40px -18px rgba(28,26,58,.35);
+  --display:"Rozha One","Georgia",serif;
+  --body:"Hind",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --step--1:clamp(.8rem,.78rem + .1vw,.86rem);
+  --step-0:clamp(1rem,.96rem + .2vw,1.1rem);
+  --step-1:clamp(1.25rem,1.1rem + .6vw,1.5rem);
+  --step-2:clamp(1.7rem,1.3rem + 1.6vw,2.4rem);
+  --step-3:clamp(2.4rem,1.6rem + 3.4vw,4.4rem);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12112A;--surface:#1C1B3A;--ink:#F4EEDF;--muted:#B3AEC4;--line:#2E2C52;
+  --marigold:#F5B82A;--marigold-ink:#F5B82A;--clay:#D69A73;--on-accent:#12112A;
+  --shadow:0 18px 40px -18px rgba(0,0,0,.7);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12112A;--surface:#1C1B3A;--ink:#F4EEDF;--muted:#B3AEC4;--line:#2E2C52;
+  --marigold:#F5B82A;--marigold-ink:#F5B82A;--clay:#D69A73;--on-accent:#12112A;
+  --shadow:0 18px 40px -18px rgba(0,0,0,.7);color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:var(--step-0);line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:1160px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--marigold);outline-offset:3px;border-radius:4px}
+.eyebrow{font-family:var(--mono);font-size:var(--step--1);letter-spacing:.08em;text-transform:uppercase;color:var(--clay)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px;
+  padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.brand{font-family:var(--display);font-size:1.3rem;text-decoration:none;display:flex;align-items:baseline;gap:.35em}
+.brand b{font-weight:400;color:var(--marigold-ink)}
+.nav ul{display:flex;gap:20px;list-style:none;margin:0;padding:0;font-weight:500;font-size:.95rem}
+.nav ul a{text-decoration:none;color:var(--muted)}
+.nav ul a:hover{color:var(--ink)}
+@media (max-width:560px){.nav ul{display:none}}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(24px,5vw,64px);align-items:center;padding-block:clamp(32px,6vw,72px)}
+.hero>*{min-width:0}
+.hero h1{font-size:var(--step-3);margin-block:14px 18px}
+.hero h1 em{font-style:normal;color:var(--clay)}
+.deva{font-family:var(--display);color:var(--marigold-ink);font-size:var(--step-1);display:block;margin-bottom:6px}
+.lede{color:var(--muted);max-width:46ch}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{font:600 1rem var(--body);border-radius:999px;padding:12px 22px;cursor:pointer;border:2px solid var(--ink);
+  background:transparent;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--marigold);border-color:var(--marigold);color:var(--on-accent)}
+.facts{display:flex;flex-wrap:wrap;gap:28px;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+.facts div{display:grid}
+.facts strong{font-family:var(--display);font-weight:400;font-size:var(--step-2);line-height:1}
+.facts span{font-size:var(--step--1);color:var(--muted)}
+.hero-photo{position:relative;perspective:1200px}
+.hero-photo figure{margin:0;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);transform-style:preserve-3d;transition:transform .25s ease-out}
+.hero-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.stamp{position:absolute;left:-14px;bottom:22px;background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:.8rem;
+  padding:8px 12px;border-radius:6px;transform:rotate(-3deg)}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.stamp{left:10px}}
+
+/* section shells */
+section{padding-block:clamp(48px,8vw,96px)}
+.sec-head{display:grid;gap:10px;margin-bottom:32px;max-width:60ch}
+.sec-head h2{font-size:var(--step-2)}
+.sec-head p{color:var(--muted)}
+
+/* scrubber */
+.clock{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(20px,4vw,48px);align-items:start}
+.clock>*{min-width:0}
+.frame{position:relative;border-radius:14px;overflow:hidden;background:var(--surface);aspect-ratio:4/3;box-shadow:var(--shadow)}
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .35s}
+.frame img.fade{opacity:0}
+.time{font-family:var(--display);font-size:clamp(3rem,2rem + 4vw,5.5rem);line-height:1;font-variant-numeric:tabular-nums}
+.time small{font-family:var(--mono);font-size:.9rem;color:var(--muted);margin-left:8px}
+.caption{font-size:var(--step-1);margin-top:14px;min-height:4.2em;text-wrap:pretty}
+.counter{font-family:var(--mono);font-size:var(--step--1);color:var(--muted);margin-top:8px}
+.scrub{margin-top:28px}
+.scrub input{width:100%;accent-color:var(--marigold);height:28px;cursor:pointer}
+.ticks{position:relative;height:30px;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:none}.ticks span:last-child{transform:translateX(-100%)}
+.stepper{display:flex;gap:10px;margin-top:18px}
+.stepper button{flex:1}
+@media (max-width:860px){.clock{grid-template-columns:1fr}}
+
+/* reveal */
+.reveal-band{background:var(--surface);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.reveal-band .wrap{padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.compare{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;max-width:100%;user-select:none;touch-action:pan-y;box-shadow:var(--shadow);cursor:ew-resize}
+.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.compare .top{clip-path:inset(0 calc(100% - var(--pos,50%)) 0 0)}
+.handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:3px;background:var(--marigold);transform:translateX(-50%)}
+.handle::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;
+  background:var(--marigold);color:var(--on-accent);display:grid;place-items:center;font-size:1.2rem;font-weight:600}
+.tag{position:absolute;top:14px;font-family:var(--mono);font-size:.78rem;padding:6px 10px;border-radius:6px;background:rgba(18,17,42,.78);color:#FFF6E0}
+.tag.l{left:14px}.tag.r{right:14px}
+.compare input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:ew-resize;margin:0}
+.compare:has(input:focus-visible){outline:3px solid var(--marigold);outline-offset:4px}
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.why div{border-top:2px solid var(--clay);padding-top:14px}
+.why h3{font-size:var(--step-1);margin-bottom:6px}
+.why p{color:var(--muted);font-size:.98rem}
+@media (max-width:760px){.why{grid-template-columns:1fr}}
+
+/* gallery */
+.gallery{columns:3 260px;column-gap:14px}
+.gallery button{display:block;width:100%;margin:0 0 14px;padding:0;border:0;background:var(--surface);border-radius:10px;overflow:hidden;
+  cursor:zoom-in;break-inside:avoid;position:relative}
+.gallery img{display:block;width:100%;height:auto;transition:transform .4s}
+.gallery button:hover img{transform:scale(1.04)}
+.gallery .t{position:absolute;left:10px;bottom:10px;font-family:var(--mono);font-size:.72rem;background:rgba(18,17,42,.78);color:#FFF6E0;padding:4px 8px;border-radius:5px}
+
+/* lightbox */
+dialog{border:0;padding:0;background:transparent;max-width:min(96vw,1400px);max-height:94vh;color:#FFF6E0}
+dialog::backdrop{background:rgba(10,9,24,.92)}
+.lb{display:grid;gap:12px;justify-items:center}
+.lb img{max-width:100%;max-height:80vh;border-radius:8px;display:block}
+.lb-bar{display:flex;align-items:center;gap:12px;width:100%;justify-content:space-between;font-size:.95rem}
+.lb-bar p{flex:1;min-width:0;text-align:center}
+.lb-bar button{background:#FFF6E0;color:#12112A;border:0;border-radius:999px;width:44px;height:44px;font-size:1.2rem;cursor:pointer;flex:none}
+.lb-close{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));background:#FFF6E0;color:#12112A;border:0;border-radius:999px;padding:8px 16px;font:600 .9rem var(--body);cursor:pointer}
+
+footer{border-top:1px solid var(--line);padding-block:32px;color:var(--muted);font-size:.92rem}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+#petals{position:fixed;inset:0;pointer-events:none;z-index:50}
+</style>
+
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top">Life <b>@</b> Acuver</a>
+    <ul>
+      <li><a href="#afternoon">The afternoon</a></li>
+      <li><a href="#reveal">Clay to idol</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Ganesha 2025 · Thursday, 21 August</p>
+      <h1><span class="deva" lang="mr">गणपती बाप्पा मोरया</span>This year, we made our own <em>Ganesha</em>.</h1>
+      <p class="lede">A week before Ganesh Chaturthi, the office floor became a studio. Newspapers went down, natural clay came out, and by evening seven hand-shaped Ganeshas sat on the front desk.</p>
+      <div class="actions">
+        <a class="btn" href="#afternoon">Walk through the afternoon ↓</a>
+        <button class="btn primary" id="morya" type="button">Shower marigolds ✿</button>
+      </div>
+      <div class="facts">
+        <div><strong>7</strong><span>idols shaped by hand</span></div>
+        <div><strong>4:24–6:12</strong><span>first photo to final line-up</span></div>
+        <div><strong>0 g</strong><span>plaster of Paris used</span></div>
+      </div>
+    </div>
+    <div class="hero-photo" id="tilt">
+      <figure><img src="images/img_6528.jpg" alt="The team standing behind the front desk with seven decorated clay Ganesha idols lined up in front of them" width="1600" height="1200"></figure>
+      <span class="stamp">21.08.2025 · 6:12 pm</span>
+    </div>
+  </header>
+
+  <section id="afternoon" aria-labelledby="afternoon-h">
+    <div class="sec-head">
+      <p class="eyebrow">By the clock</p>
+      <h2 id="afternoon-h">The afternoon, one photo at a time</h2>
+      <p>Drag the slider or use the arrow buttons to move through the workshop in the order the photos were taken.</p>
+    </div>
+    <div class="clock">
+      <div class="frame"><img id="clockImg" src="images/img_6425.jpg" alt=""></div>
+      <div>
+        <div class="time" id="clockTime" aria-live="polite">4:24<small>pm</small></div>
+        <p class="caption" id="clockCap"></p>
+        <p class="counter" id="clockCount"></p>
+        <div class="scrub">
+          <label class="eyebrow" for="scrub">Time of day</label>
+          <input type="range" id="scrub" min="0" max="11" step="1" value="0">
+          <div class="ticks" id="ticks"></div>
+        </div>
+        <div class="stepper">
+          <button class="btn" id="prev" type="button" aria-label="Previous photo">← Earlier</button>
+          <button class="btn" id="next" type="button" aria-label="Next photo">Later →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="reveal-band" id="reveal" aria-labelledby="reveal-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Clay to idol</p>
+      <h2 id="reveal-h">Same clay, two hours apart</h2>
+      <p>Drag across the photo to go from the workshop floor to the finished line-up.</p>
+    </div>
+    <div class="compare" id="compare">
+      <img src="images/img_6528.jpg" alt="Finished, decorated Ganesha idols at 6:12 pm">
+      <img class="top" src="images/img_6430.jpg" alt="Team shaping raw clay on the floor at 4:26 pm">
+      <span class="tag l">4:26 pm · raw clay</span>
+      <span class="tag r">6:12 pm · finished</span>
+      <div class="handle" aria-hidden="true"></div>
+      <input type="range" id="compareRange" min="0" max="100" value="50" aria-label="Reveal the finished idols">
+    </div>
+    <div class="why">
+      <div><h3>Natural clay</h3><p>Every idol is unbaked earth. At visarjan it dissolves in a bucket of water at home, and the clay can go back into a plant pot.</p></div>
+      <div><h3>No plaster, no paint run-off</h3><p>Skipping plaster of Paris and chemical paints keeps lakes and drains clear after the festival.</p></div>
+      <div><h3>Made side by side</h3><p>Analysts, engineers and ops sat on one floor, swapped tips across the circle and each left with something they made.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section id="gallery" aria-labelledby="gallery-h">
+    <div class="sec-head">
+      <p class="eyebrow">Gallery · 12 photos</p>
+      <h2 id="gallery-h">Every frame from the day</h2>
+      <p>Select any photo to view it full size. Use the arrow keys to move between photos.</p>
+    </div>
+    <div class="gallery" id="grid"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Life @ Acuver · Ganesha 2025</span>
+    <span>Photos taken 21 August 2025 at the Acuver Consulting office.</span>
+  </div>
+</footer>
+
+<dialog id="lb" aria-label="Photo viewer">
+  <button class="lb-close" id="lbClose" type="button">Close ✕</button>
+  <div class="lb">
+    <img id="lbImg" src="" alt="">
+    <div class="lb-bar">
+      <button id="lbPrev" type="button" aria-label="Previous photo">←</button>
+      <p id="lbCap"></p>
+      <button id="lbNext" type="button" aria-label="Next photo">→</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const PHOTOS = [
+  {f:"img_6425",t:"16:24",w:4,c:"Newspapers go down and the circle forms by the yellow wall."},
+  {f:"img_6426",t:"16:24",w:4,c:"First lumps of clay are handed round the circle."},
+  {f:"img_6427",t:"16:24",w:3,c:"Kneading starts. The clay has to be smooth before any shaping."},
+  {f:"img_6428",t:"16:24",w:3,c:"Heads down. Everyone rolls out a firm seat for Ganesha to sit on."},
+  {f:"img_6430",t:"16:26",w:4,c:"The base takes shape: the seat first, then the round belly."},
+  {f:"img_6431",t:"16:27",w:4,c:"Kneeling, cross-legged, leaning in. Everyone ends up on the floor."},
+  {f:"img_6432",t:"16:28",w:3,c:"Steel bowls of water in the middle keep the clay soft enough to work."},
+  {f:"img_6433",t:"16:29",w:3,c:"Tips travel across the circle faster than the clay does."},
+  {f:"img_6436",t:"16:31",w:4,c:"A second circle forms in the lounge as more people join in."},
+  {f:"img_6437",t:"16:31",w:4,c:"Trunks, ears and arms go on one piece at a time."},
+  {f:"img_6444",t:"16:37",w:4,c:"The wide view: a whole office floor turned into a studio."},
+  {f:"img_6528",t:"18:12",w:4,c:"Dressed, decorated and lined up: seven Ganeshas and the people who made them."}
+];
+const fmt = t => { let [h,m] = t.split(":").map(Number); return {hm:`${((h+11)%12)+1}:${String(m).padStart(2,"0")}`, ap:h<12?"am":"pm"}; };
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---- clock scrubber ---- */
+const img = document.getElementById("clockImg"), timeEl = document.getElementById("clockTime"),
+      cap = document.getElementById("clockCap"), cnt = document.getElementById("clockCount"),
+      scrub = document.getElementById("scrub");
+// preload
+PHOTOS.forEach(p => { const i = new Image(); i.src = `images/${p.f}.jpg`; });
+let cur = -1;
+function show(i){
+  i = Math.max(0, Math.min(PHOTOS.length-1, i));
+  if (i === cur) return; cur = i;
+  const p = PHOTOS[i], {hm,ap} = fmt(p.t);
+  timeEl.innerHTML = `${hm}<small>${ap}</small>`;
+  cap.textContent = p.c;
+  cnt.textContent = `Photo ${i+1} of ${PHOTOS.length}`;
+  scrub.value = i;
+  scrub.setAttribute("aria-valuetext", `${hm} ${ap}, photo ${i+1} of ${PHOTOS.length}`);
+  img.alt = p.c;
+  if (reduce) { img.src = `images/${p.f}.jpg`; return; }
+  img.classList.add("fade");
+  setTimeout(() => { img.src = `images/${p.f}.jpg`; img.onload = () => img.classList.remove("fade"); }, 180);
+}
+scrub.addEventListener("input", e => show(+e.target.value));
+document.getElementById("prev").onclick = () => show(cur-1);
+document.getElementById("next").onclick = () => show(cur+1);
+const ticks = document.getElementById("ticks");
+[0,4,8,11].forEach(i => { const s = document.createElement("span"); const {hm,ap}=fmt(PHOTOS[i].t);
+  s.textContent = `${hm} ${ap}`; s.style.left = `${i/(PHOTOS.length-1)*100}%`; ticks.appendChild(s); });
+show(0);
+
+/* ---- compare slider ---- */
+const cmp = document.getElementById("compare"), cr = document.getElementById("compareRange");
+const setPos = v => cmp.style.setProperty("--pos", v + "%");
+cr.addEventListener("input", e => setPos(e.target.value));
+setPos(50);
+
+/* ---- gallery + lightbox ---- */
+const grid = document.getElementById("grid"), lb = document.getElementById("lb"),
+      lbImg = document.getElementById("lbImg"), lbCap = document.getElementById("lbCap");
+let lbi = 0;
+PHOTOS.forEach((p, i) => {
+  const b = document.createElement("button"); b.type = "button";
+  const {hm,ap} = fmt(p.t);
+  b.setAttribute("aria-label", `Open photo ${i+1}: ${p.c}`);
+  b.innerHTML = `<img src="thumbs/${p.f}.jpg" alt="" loading="lazy" width="${p.w===4?800:600}" height="${p.w===4?600:800}"><span class="t">${hm} ${ap}</span>`;
+  b.onclick = () => openLb(i);
+  grid.appendChild(b);
+});
+function setLb(i){
+  lbi = (i + PHOTOS.length) % PHOTOS.length; const p = PHOTOS[lbi], {hm,ap} = fmt(p.t);
+  lbImg.src = `images/${p.f}.jpg`; lbImg.alt = p.c; lbCap.textContent = `${hm} ${ap} · ${p.c}`;
+}
+function openLb(i){ setLb(i); lb.showModal(); }
+document.getElementById("lbPrev").onclick = () => setLb(lbi-1);
+document.getElementById("lbNext").onclick = () => setLb(lbi+1);
+document.getElementById("lbClose").onclick = () => lb.close();
+lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+document.addEventListener("keydown", e => {
+  if (lb.open) { if (e.key === "ArrowLeft") setLb(lbi-1); if (e.key === "ArrowRight") setLb(lbi+1); }
+});
+let sx = null;
+lb.addEventListener("touchstart", e => sx = e.touches[0].clientX, {passive:true});
+lb.addEventListener("touchend", e => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx;
+  if (Math.abs(dx) > 40) setLb(lbi + (dx < 0 ? 1 : -1)); sx = null; });
+
+/* ---- hero tilt ---- */
+const tilt = document.getElementById("tilt"), fig = tilt.querySelector("figure");
+if (!reduce && matchMedia("(hover:hover)").matches) {
+  tilt.addEventListener("mousemove", e => { const r = tilt.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width - .5, y = (e.clientY - r.top)/r.height - .5;
+    fig.style.transform = `rotateY(${x*6}deg) rotateX(${-y*6}deg)`; });
+  tilt.addEventListener("mouseleave", () => fig.style.transform = "");
+}
+
+/* ---- marigold shower ---- */
+const cv = document.getElementById("petals"), ctx = cv.getContext("2d");
+let petals = [], running = false;
+function resize(){ const d = devicePixelRatio || 1; cv.width = innerWidth*d; cv.height = innerHeight*d; ctx.setTransform(d,0,0,d,0,0); }
+addEventListener("resize", resize); resize();
+const HUES = ["#F5A300","#E88A00","#FFC21A","#D96B00","#C2410C"];
+function burst(){
+  if (reduce) return;
+  for (let i = 0; i < 140; i++) petals.push({
+    x: Math.random()*innerWidth, y: -20 - Math.random()*innerHeight*.6,
+    r: 5 + Math.random()*7, vy: 1.2 + Math.random()*2.2, vx: (Math.random()-.5)*1.2,
+    a: Math.random()*Math.PI*2, va: (Math.random()-.5)*.12, sw: Math.random()*Math.PI*2,
+    c: HUES[(Math.random()*HUES.length)|0] });
+  if (!running) { running = true; requestAnimationFrame(tick); }
+}
+function tick(){
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  petals.forEach(p => { p.sw += .03; p.x += p.vx + Math.sin(p.sw)*.8; p.y += p.vy; p.a += p.va;
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.fillStyle = p.c;
+    ctx.beginPath(); ctx.ellipse(0,0,p.r,p.r*.55,0,0,Math.PI*2); ctx.fill(); ctx.restore(); });
+  petals = petals.filter(p => p.y < innerHeight + 30);
+  if (petals.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0,0,innerWidth,innerHeight); }
+}
+document.getElementById("morya").addEventListener("click", burst);
+</script>
