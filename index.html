@@ -1,14 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Life@Acuver</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@500;600&display=swap">
 <style>
-/* Layout: sticky tab bar over a masonry photo wall; full-screen viewer with filmstrip + slideshow. */
+/* Layout: sticky section tabs + year timeline over an even photo grid; full-screen viewer with filmstrip + slideshow. */
 :root{
   --bg:#FFFCF4; --tile:#F1EAD9; --ink:#1C1A3A; --muted:#6A6680; --line:#E4DAC4;
   --accent:#E8A202; --on-accent:#1C1A3A;
   --ui:"Hind",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#12112A;--tile:#1C1B3A;--ink:#F4EEDF;--muted:#ADA8C2;--line:#2E2C52;--accent:#F5B82A;--on-accent:#12112A;color-scheme:dark}}
@@ -16,47 +22,67 @@
   --bg:#12112A;--tile:#1C1B3A;--ink:#F4EEDF;--muted:#ADA8C2;--line:#2E2C52;--accent:#F5B82A;--on-accent:#12112A;color-scheme:dark}
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--ui);
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:14px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 24px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+[hidden]{display:none!important}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 
-/* tabs */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);
+/* header bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);
   backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
   margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 16px;
-  padding:10px max(16px,env(safe-area-inset-left,0px))}
-.tabs{position:relative;display:flex;gap:4px;max-width:1400px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
+  padding:10px max(16px,env(safe-area-inset-left,0px)) 12px}
+.bar-in{max-width:1400px;margin:0 auto;display:grid;gap:10px}
+
+/* section tabs */
+.tabs{position:relative;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar,.years::-webkit-scrollbar{display:none}
 .tab{position:relative;z-index:1;flex:none;border:0;background:none;color:var(--muted);font:600 1rem var(--ui);
   padding:10px 18px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:color .2s}
 .tab:hover{color:var(--ink)}
 .tab[aria-selected="true"]{color:var(--on-accent)}
-.tab .n{font-size:.75rem;min-width:22px;padding:1px 7px;border-radius:999px;background:var(--tile);color:var(--muted);font-variant-numeric:tabular-nums}
+.n{font-size:.75rem;min-width:22px;padding:1px 7px;border-radius:999px;background:var(--tile);color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
 .tab[aria-selected="true"] .n{background:rgba(255,255,255,.45);color:var(--on-accent)}
 .pill{position:absolute;z-index:0;top:0;height:100%;border-radius:999px;background:var(--accent);
   transition:transform .35s cubic-bezier(.3,1.3,.5,1),width .35s cubic-bezier(.3,1.3,.5,1)}
 
-/* wall */
-.gallery{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+/* year timeline */
+.years{position:relative;display:flex;overflow-x:auto;scrollbar-width:none;padding-block:4px 2px}
+.years::before{content:"";position:absolute;left:24px;right:24px;top:15px;height:2px;background:var(--line)}
+.yr{position:relative;z-index:1;flex:1 0 64px;border:0;background:none;cursor:pointer;display:grid;justify-items:center;gap:6px;
+  font:600 .92rem var(--ui);color:var(--muted);padding:0 4px 4px;font-variant-numeric:tabular-nums;transition:color .2s}
+.yr .dot{width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--line);transition:transform .25s,border-color .25s,background .25s}
+.yr.has .dot{border-color:var(--accent)}
+.yr.has{color:var(--ink)}
+.yr:hover .dot{transform:scale(1.2)}
+.yr[aria-pressed="true"]{color:var(--ink)}
+.yr[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);transform:scale(1.35);box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 25%,transparent)}
+.yr small{font-size:.7rem;font-weight:500;color:var(--muted);margin-top:-4px}
+
+/* grid */
+.stagewrap{max-width:1400px;margin:0 auto}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;transition:opacity .22s,transform .22s}
+.gallery.out{opacity:0;transform:translateY(8px)}
+.gallery.out.l{transform:translateX(-24px)}.gallery.out.r{transform:translateX(24px)}
 .gallery button{display:block;width:100%;aspect-ratio:4/3;max-width:100%;margin:0;padding:0;border:0;background:var(--tile);
-  border-radius:12px;overflow:hidden;cursor:zoom-in;position:relative;
-  animation:rise .5s both;animation-delay:calc(var(--i) * 45ms)}
-.gallery img{display:block;width:100%;height:100%;object-fit:contain;transition:transform .5s ease,filter .3s}
+  border-radius:12px;overflow:hidden;cursor:zoom-in;position:relative;animation:rise .45s both;animation-delay:calc(var(--i) * 40ms)}
+.gallery img{display:block;width:100%;height:100%;object-fit:contain;transition:transform .5s ease}
 .gallery button::after{content:"⤢";position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;
   display:grid;place-items:center;background:rgba(18,17,42,.7);color:#FFF6E0;opacity:0;transform:scale(.8);transition:.25s}
-.gallery button:hover img{transform:scale(1.05)}
+.gallery button:hover img{transform:scale(1.04)}
 .gallery button:hover::after,.gallery button:focus-visible::after{opacity:1;transform:none}
 @keyframes rise{from{opacity:.001;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 
-.empty{max-width:420px;margin:12vh auto;text-align:center;color:var(--muted);display:grid;gap:10px;justify-items:center;animation:rise .4s both}
+.empty{grid-column:1/-1;max-width:420px;margin:10vh auto;text-align:center;color:var(--muted);display:grid;gap:10px;justify-items:center;animation:rise .4s both}
 .empty .ring{width:84px;height:84px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;font-size:2rem;color:var(--accent)}
 .empty b{color:var(--ink);font-size:1.15rem}
 
 /* viewer */
 dialog{border:0;padding:0;margin:0;width:100%;height:100%;max-width:none;max-height:none;background:#0A0918;color:#FFF6E0;font-family:var(--ui)}
-dialog::backdrop{background:transparent}
-.v{height:100%;display:grid;grid-template-rows:auto 1fr auto;
+dialog::backdrop{background:#0A0918}
+.v{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;
   padding:calc(10px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .count{font-variant-numeric:tabular-nums;opacity:.8}
@@ -64,11 +90,11 @@ dialog::backdrop{background:transparent}
 .ic{background:rgba(255,246,224,.12);color:#FFF6E0;border:0;border-radius:999px;min-width:44px;height:44px;padding:0 14px;font:600 .95rem var(--ui);cursor:pointer;transition:background .2s}
 .ic:hover{background:rgba(255,246,224,.24)}
 .ic.on{background:var(--accent);color:var(--on-accent)}
-.stage{position:relative;display:grid;place-items:center;overflow:hidden;min-height:0}
+.stage{position:relative;overflow:hidden;min-height:0;margin-top:10px}
 .stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:transform .3s ease,opacity .25s;cursor:zoom-in;touch-action:pan-y}
 .stage img.zoom{transform:scale(1.9);cursor:zoom-out}
 .stage img.fade{opacity:0}
-.arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;font-size:1.4rem}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;font-size:1.4rem;z-index:1}
 .arrow.l{left:4px}.arrow.r{right:4px}
 .progress{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);width:0}
 .strip{display:flex;gap:8px;overflow-x:auto;padding-top:10px;scrollbar-width:thin;justify-content:safe center}
@@ -79,11 +105,16 @@ dialog::backdrop{background:transparent}
 @media (max-width:600px){.arrow{display:none}.strip button{width:56px;height:42px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+</head>
+<body>
 
 <div class="bar">
-  <div class="tabs" role="tablist" aria-label="Albums" id="tabs"><span class="pill" id="pill" aria-hidden="true"></span></div>
+  <div class="bar-in">
+    <div class="tabs" role="tablist" aria-label="Sections" id="tabs"><span class="pill" id="pill" aria-hidden="true"></span></div>
+    <div class="years" role="group" aria-label="Year" id="years"></div>
+  </div>
 </div>
-<div class="gallery" id="grid" role="tabpanel"></div>
+<div class="stagewrap"><div class="gallery" id="grid" role="tabpanel"></div></div>
 
 <dialog id="lb" aria-label="Photo viewer">
   <div class="v">
@@ -105,70 +136,111 @@ dialog::backdrop{background:transparent}
 </dialog>
 
 <script>
-/* Albums: add photo file names (from images/ and thumbs/) to fill a tab. o: 4 = landscape, 3 = portrait */
-const ALBUMS = [
-  {id:"ganesha", name:"Ganesha", photos:[
-    ["img_6425",4],["img_6426",4],["img_6427",3],["img_6428",3],["img_6430",4],["img_6431",4],
-    ["img_6432",3],["img_6433",3],["img_6436",4],["img_6437",4],["img_6444",4],["img_6528",4]]},
-  {id:"awards-day", name:"Awards Day", photos:[]},
-  {id:"event", name:"Event", photos:[]},
-  {id:"offsite", name:"Offsite", photos:[]}
+/* Each section holds photos by year. Add file names (from images/ and thumbs/) under a year to fill it. */
+const YEARS = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
+const SECTIONS = [
+  {id:"awards", name:"Awards", years:{}},
+  {id:"offsite", name:"Offsite", years:{}},
+  {id:"activities", name:"Activities", years:{
+    2025:["img_6425","img_6426","img_6427","img_6428","img_6430","img_6431",
+          "img_6432","img_6433","img_6436","img_6437","img_6444","img_6528"]}}
 ];
 const $ = id => document.getElementById(id);
-const tabs = $("tabs"), pill = $("pill"), grid = $("grid"), lb = $("lb"), big = $("big"), strip = $("strip");
-let album = ALBUMS[0], idx = 0, timer = null;
+const tabs = $("tabs"), pill = $("pill"), yearsEl = $("years"), grid = $("grid"), lb = $("lb"), big = $("big"), strip = $("strip");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const total = s => Object.values(s.years).reduce((a, p) => a + p.length, 0);
+const photosOf = (s, y) => s.years[y] || [];
+const latestYear = s => [...YEARS].reverse().find(y => photosOf(s, y).length) || YEARS[YEARS.length - 1];
+let sec = SECTIONS[0], year = latestYear(sec), photos = [], idx = 0, timer = null, swapT = null;
 
-/* tabs */
-ALBUMS.forEach(a => {
+/* section tabs */
+SECTIONS.forEach(s => {
   const b = document.createElement("button");
-  b.className = "tab"; b.type = "button"; b.role = "tab"; b.id = "tab-" + a.id; b.dataset.id = a.id;
-  b.innerHTML = `${a.name}<span class="n">${a.photos.length}</span>`;
-  b.onclick = () => { location.hash = a.id; };
+  b.className = "tab"; b.type = "button"; b.setAttribute("role", "tab"); b.id = "tab-" + s.id; b.dataset.id = s.id;
+  b.innerHTML = `${s.name}<span class="n">${total(s)}</span>`;
+  b.onclick = () => go(s.id, latestYear(s));
   tabs.appendChild(b);
 });
 tabs.addEventListener("keydown", e => {
   if (!["ArrowLeft","ArrowRight"].includes(e.key)) return;
-  const i = ALBUMS.indexOf(album) + (e.key === "ArrowRight" ? 1 : -1);
-  const a = ALBUMS[(i + ALBUMS.length) % ALBUMS.length];
-  location.hash = a.id; $("tab-" + a.id).focus();
+  const i = SECTIONS.indexOf(sec) + (e.key === "ArrowRight" ? 1 : -1);
+  const s = SECTIONS[(i + SECTIONS.length) % SECTIONS.length];
+  go(s.id, latestYear(s)); $("tab-" + s.id).focus();
 });
 function movePill(){
-  const t = $("tab-" + album.id);
+  const t = $("tab-" + sec.id);
   pill.style.width = t.offsetWidth + "px"; pill.style.transform = `translateX(${t.offsetLeft}px)`;
 }
-function select(id){
-  album = ALBUMS.find(a => a.id === id) || ALBUMS[0];
+
+/* year timeline */
+YEARS.forEach(y => {
+  const b = document.createElement("button");
+  b.className = "yr"; b.type = "button"; b.dataset.y = y;
+  b.innerHTML = `<span class="dot"></span>${y}<small></small>`;
+  b.onclick = () => go(sec.id, y);
+  yearsEl.appendChild(b);
+});
+yearsEl.addEventListener("keydown", e => {
+  if (!["ArrowLeft","ArrowRight"].includes(e.key)) return;
+  const i = YEARS.indexOf(year) + (e.key === "ArrowRight" ? 1 : -1);
+  if (i < 0 || i >= YEARS.length) return;
+  go(sec.id, YEARS[i]); yearsEl.querySelector(`[data-y="${YEARS[i]}"]`).focus();
+});
+
+/* routing: #activities-2025 */
+function go(id, y){ location.hash = `${id}-${y}`; }
+function parse(){
+  const m = location.hash.slice(1).match(/^([a-z]+)(?:-(\d{4}))?$/);
+  const s = SECTIONS.find(x => m && x.id === m[1]) || SECTIONS.find(x => total(x)) || SECTIONS[0];
+  const y = m && YEARS.includes(+m[2]) ? +m[2] : latestYear(s);
+  return [s, y];
+}
+function apply(first){
+  const [s, y] = parse();
+  const dir = s === sec ? (y > year ? "r" : y < year ? "l" : "") : "";
+  sec = s; year = y;
   tabs.querySelectorAll(".tab").forEach(t => {
-    const on = t.dataset.id === album.id;
+    const on = t.dataset.id === sec.id;
     t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1;
-    if (on) t.scrollIntoView({block:"nearest", inline:"nearest"});
   });
-  grid.setAttribute("aria-labelledby", "tab-" + album.id);
-  movePill(); render();
+  yearsEl.querySelectorAll(".yr").forEach(b => {
+    const yy = +b.dataset.y, n = photosOf(sec, yy).length, on = yy === year;
+    b.classList.toggle("has", n > 0);
+    b.setAttribute("aria-pressed", on);
+    b.setAttribute("aria-label", `${yy}, ${n} photo${n === 1 ? "" : "s"}`);
+    b.querySelector("small").textContent = n ? n : "";
+    if (on) b.scrollIntoView({block:"nearest", inline:"center"});
+  });
+  grid.setAttribute("aria-labelledby", "tab-" + sec.id);
+  movePill();
+  if (first || reduce) { render(); return; }
+  clearTimeout(swapT);
+  grid.classList.add("out"); if (dir) grid.classList.add(dir);
+  swapT = setTimeout(() => { render(); grid.classList.remove("out","l","r"); }, 220);
 }
 function render(){
+  photos = photosOf(sec, year);
   grid.innerHTML = "";
-  grid.className = album.photos.length ? "gallery" : "";
-  if (!album.photos.length){
-    grid.innerHTML = `<div class="empty"><div class="ring">✿</div><b>${album.name}</b><span>Photos coming soon</span></div>`;
+  if (!photos.length){
+    grid.innerHTML = `<div class="empty"><div class="ring">✿</div><b>${sec.name} ${year}</b><span>Photos coming soon</span></div>`;
     return;
   }
-  album.photos.forEach(([f,o], n) => {
+  photos.forEach((f, n) => {
     const b = document.createElement("button"); b.type = "button"; b.style.setProperty("--i", n);
-    b.setAttribute("aria-label", `Open ${album.name} photo ${n+1}`);
-    b.innerHTML = `<img src="thumbs/${f}.jpg" alt="${album.name} photo ${n+1}" loading="lazy" width="${o===4?800:600}" height="${o===4?600:800}">`;
+    b.setAttribute("aria-label", `Open ${sec.name} ${year} photo ${n+1}`);
+    b.innerHTML = `<img src="thumbs/${f}.jpg" alt="${sec.name} ${year} photo ${n+1}" loading="lazy">`;
     b.onclick = () => open(n);
     grid.appendChild(b);
   });
 }
-addEventListener("hashchange", () => select(location.hash.slice(1)));
+addEventListener("hashchange", () => apply(false));
 addEventListener("resize", movePill);
-document.fonts?.ready.then(movePill);
+document.fonts && document.fonts.ready.then(movePill);
 
 /* viewer */
 function open(n){
   strip.innerHTML = "";
-  album.photos.forEach(([f], i) => {
+  photos.forEach((f, i) => {
     const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", `Photo ${i+1}`);
     b.innerHTML = `<img src="thumbs/${f}.jpg" alt="">`; b.onclick = () => show(i);
     strip.appendChild(b);
@@ -176,14 +248,14 @@ function open(n){
   lb.showModal(); show(n, true);
 }
 function show(n, instant){
-  const N = album.photos.length; idx = (n + N) % N;
+  const N = photos.length; idx = (n + N) % N;
   big.classList.remove("zoom");
-  const src = `images/${album.photos[idx][0]}.jpg`;
-  const swap = () => { big.src = src; big.alt = `${album.name} photo ${idx+1}`; big.onload = () => big.classList.remove("fade"); };
+  const src = `images/${photos[idx]}.jpg`;
+  const swap = () => { big.src = src; big.alt = `${sec.name} ${year} photo ${idx+1}`; big.onload = () => big.classList.remove("fade"); };
   if (instant) swap(); else { big.classList.add("fade"); setTimeout(swap, 160); }
-  $("count").textContent = `${album.name} · ${idx+1} / ${N}`;
+  $("count").textContent = `${sec.name} ${year} · ${idx+1} / ${N}`;
   [...strip.children].forEach((b, i) => b.setAttribute("aria-current", i === idx));
-  strip.children[idx]?.scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
+  strip.children[idx] && strip.children[idx].scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
   if (timer) restartProgress();
 }
 function restartProgress(){
@@ -220,5 +292,7 @@ $("stage").addEventListener("touchstart", e => sx = e.touches[0].clientX, {passi
 $("stage").addEventListener("touchend", e => { if (sx === null) return; const d = e.changedTouches[0].clientX - sx;
   if (Math.abs(d) > 40) show(idx + (d < 0 ? 1 : -1)); sx = null; });
 
-select(location.hash.slice(1));
+apply(true);
 </script>
+</body>
+</html>
