@@ -9,22 +9,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@500;600;700&display=swap">
 <style>
-/* Layout: year selector (segmented pill) over category chips, then an even photo grid; full-screen viewer. */
+/* Layout: section tabs, then year selector, then (Activities only) category chips, then an even photo grid; full-screen viewer. */
 :root{
   --bg:#F3F4F0; --surface:#FFFFFF; --tile:#E7E9E2; --ink:#141A16; --muted:#5C635E; --line:#DCDFD7;
   --active:#141A16; --on-active:#FFFFFF; --accent:#E8A202;
-  --c-awards:#B98A12; --c-offsite:#1F7A78; --c-activities:#2E6A92;
+  --c-activities:#2E6A92; --c-townhalls:#1F7A78; --c-celebrations:#B23A5B; --c-csr:#3F7D2C;
   --ui:"Hind",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#111512;--surface:#1A201C;--tile:#222924;--ink:#EEF1EC;--muted:#A3ABA5;--line:#2E3631;
   --active:#EEF1EC;--on-active:#111512;--accent:#F5B82A;
-  --c-awards:#E2B53E;--c-offsite:#4FC0BC;--c-activities:#6FB0DD;color-scheme:dark}}
+  --c-activities:#6FB0DD;--c-townhalls:#4FC0BC;--c-celebrations:#E77D99;--c-csr:#7FC36A;color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#111512;--surface:#1A201C;--tile:#222924;--ink:#EEF1EC;--muted:#A3ABA5;--line:#2E3631;
   --active:#EEF1EC;--on-active:#111512;--accent:#F5B82A;
-  --c-awards:#E2B53E;--c-offsite:#4FC0BC;--c-activities:#6FB0DD;color-scheme:dark}
+  --c-activities:#6FB0DD;--c-townhalls:#4FC0BC;--c-celebrations:#E77D99;--c-csr:#7FC36A;color-scheme:dark}
 
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -37,10 +37,21 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* filter bar */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);
   backdrop-filter:blur(10px);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 20px;
-  padding:20px max(16px,env(safe-area-inset-left,0px)) 16px}
+  padding:14px max(16px,env(safe-area-inset-left,0px)) 16px}
 .bar-in{max-width:1400px;margin:0 auto;display:grid;gap:16px;justify-items:start}
 .scroll{max-width:100%;overflow-x:auto;scrollbar-width:none;padding:3px}
 .scroll::-webkit-scrollbar{display:none}
+
+/* sections: underline tabs */
+.secs{position:relative;display:flex;gap:28px;border-bottom:1px solid var(--line);width:100%}
+.secwrap{width:100%}
+.sec{position:relative;flex:none;border:0;background:none;cursor:pointer;color:var(--muted);
+  font:700 1.35rem var(--ui);padding:8px 2px 12px;transition:color .25s}
+.sec:hover{color:var(--ink)}
+.sec[aria-selected="true"]{color:var(--ink)}
+.sec .n{font-size:.85rem;font-weight:600;color:var(--muted);margin-left:6px;font-variant-numeric:tabular-nums}
+.sec-line{position:absolute;bottom:-1px;left:0;height:3px;border-radius:3px;background:var(--active);
+  transition:transform .4s cubic-bezier(.3,1.25,.5,1),width .4s cubic-bezier(.3,1.25,.5,1)}
 
 /* years: segmented pill */
 .years{position:relative;display:inline-flex;gap:2px;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:999px}
@@ -51,7 +62,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .yr-pill{position:absolute;z-index:0;top:5px;bottom:5px;left:0;border-radius:999px;background:var(--active);
   transition:transform .4s cubic-bezier(.3,1.25,.5,1),width .4s cubic-bezier(.3,1.25,.5,1)}
 
-/* category chips */
+/* category chips (Activities) */
 .cats{display:flex;gap:10px}
 .chip{flex:none;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
   font:600 1.02rem var(--ui);padding:10px 18px;border-radius:999px;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s}
@@ -61,6 +72,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .chip[aria-pressed="true"]{background:var(--active);color:var(--on-active);border-color:var(--active)}
 .chip[aria-pressed="true"] .n{color:color-mix(in srgb,var(--on-active) 65%,transparent)}
 .chip.zero:not([aria-pressed="true"]){opacity:.55}
+.catwrap{animation:rise .3s both}
 
 /* grid */
 .stagewrap{max-width:1400px;margin:0 auto}
@@ -103,7 +115,8 @@ dialog::backdrop{background:#0B0E0C}
 .strip button[aria-current="true"]{border-color:#F2F4EF;opacity:1}
 .strip button:hover{opacity:.9}
 .strip img{width:100%;height:100%;object-fit:cover;display:block}
-@media (max-width:600px){.arrow{display:none}.strip button{width:56px;height:42px}.yr{font-size:1rem;padding:9px 16px}.chip{font-size:.95rem;padding:9px 14px}}
+@media (max-width:600px){.arrow{display:none}.strip button{width:56px;height:42px}.sec{font-size:1.15rem}.secs{gap:20px}
+  .yr{font-size:1rem;padding:9px 16px}.chip{font-size:.95rem;padding:9px 14px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -111,11 +124,12 @@ dialog::backdrop{background:#0B0E0C}
 
 <div class="bar">
   <div class="bar-in">
+    <div class="scroll secwrap"><div class="secs" role="tablist" aria-label="Section" id="secs"><span class="sec-line" id="secLine" aria-hidden="true"></span></div></div>
     <div class="scroll"><div class="years" role="group" aria-label="Year" id="years"><span class="yr-pill" id="yrPill" aria-hidden="true"></span></div></div>
-    <div class="scroll"><div class="cats" role="group" aria-label="Category" id="cats"></div></div>
+    <div class="scroll catwrap" id="catwrap"><div class="cats" role="group" aria-label="Category" id="cats"></div></div>
   </div>
 </div>
-<div class="stagewrap"><div class="gallery" id="grid" aria-live="polite"></div></div>
+<div class="stagewrap"><div class="gallery" id="grid" role="tabpanel" aria-live="polite"></div></div>
 
 <dialog id="lb" aria-label="Photo viewer">
   <div class="v">
@@ -137,100 +151,133 @@ dialog::backdrop{background:#0B0E0C}
 </dialog>
 
 <script>
-/* Add photos here: file names from images/ and thumbs/, under a category and year. */
+/* Add photos here: file names from images/ and thumbs/, under a section (and category) and year. */
 const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
-const CATS = [
-  {id:"awards", name:"Awards", color:"--c-awards", photos:{}},
-  {id:"offsite", name:"Offsite", color:"--c-offsite", photos:{}},
-  {id:"activities", name:"Activities", color:"--c-activities", photos:{
-    2025:["img_6425","img_6426","img_6427","img_6428","img_6430","img_6431",
-          "img_6432","img_6433","img_6436","img_6437","img_6444","img_6528"]}}
+const SECTIONS = [
+  {id:"awards", name:"Awards", photos:{}},
+  {id:"offsite", name:"Offsite", photos:{}},
+  {id:"activities", name:"Activities", cats:[
+    {id:"activities", name:"Activities", color:"--c-activities", photos:{
+      2025:["img_6425","img_6426","img_6427","img_6428","img_6430","img_6431",
+            "img_6432","img_6433","img_6436","img_6437","img_6444","img_6528"]}},
+    {id:"town-halls", name:"Town Halls", color:"--c-townhalls", photos:{}},
+    {id:"celebrations", name:"Celebrations", color:"--c-celebrations", photos:{}},
+    {id:"csr", name:"CSR", color:"--c-csr", photos:{}}
+  ]}
 ];
 const $ = id => document.getElementById(id);
-const yearsEl = $("years"), yrPill = $("yrPill"), catsEl = $("cats"), grid = $("grid"), lb = $("lb"), big = $("big"), strip = $("strip");
+const secsEl = $("secs"), secLine = $("secLine"), yearsEl = $("years"), yrPill = $("yrPill"),
+      catwrap = $("catwrap"), catsEl = $("cats"), grid = $("grid"), lb = $("lb"), big = $("big"), strip = $("strip");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const inYear = (c, y) => (c.photos[y] || []).map(f => ({f, c}));
-const allOf = y => CATS.flatMap(c => inYear(c, y));
-const yearCount = y => allOf(y).length;
-const defaultYear = () => YEARS.find(y => yearCount(y)) || YEARS[0];
-let year = defaultYear(), cat = "all", photos = [], idx = 0, timer = null, swapT = null;
 
+/* photo lookups: {f, label, color} */
+const catPhotos = (c, y) => (c.photos[y] || []).map(f => ({f, label:c.name, color:c.color}));
+const secPhotos = (s, y) => s.cats ? s.cats.flatMap(c => catPhotos(c, y)) : (s.photos[y] || []).map(f => ({f, label:s.name}));
+const secTotal = s => YEARS.reduce((a, y) => a + secPhotos(s, y).length, 0);
+const latestYear = s => YEARS.find(y => secPhotos(s, y).length) || YEARS[0];
+let sec = SECTIONS[0], year = YEARS[0], cat = "all", photos = [], idx = 0, timer = null, swapT = null;
+
+/* sections */
+SECTIONS.forEach(s => {
+  const b = document.createElement("button");
+  b.className = "sec"; b.type = "button"; b.setAttribute("role", "tab"); b.id = "sec-" + s.id; b.dataset.s = s.id;
+  b.innerHTML = `${s.name}<span class="n">${secTotal(s)}</span>`;
+  b.onclick = () => go(s.id, latestYear(s), "all");
+  secsEl.appendChild(b);
+});
 /* years */
 YEARS.forEach(y => {
   const b = document.createElement("button");
   b.className = "yr"; b.type = "button"; b.dataset.y = y; b.textContent = y;
-  b.onclick = () => go(y, cat);
+  b.onclick = () => go(sec.id, y, cat);
   yearsEl.appendChild(b);
 });
-function movePill(){
-  const b = yearsEl.querySelector(`[data-y="${year}"]`);
-  yrPill.style.width = b.offsetWidth + "px"; yrPill.style.transform = `translateX(${b.offsetLeft}px)`;
-}
-/* categories */
-[{id:"all", name:"All"}, ...CATS].forEach(c => {
-  const b = document.createElement("button");
-  b.className = "chip"; b.type = "button"; b.dataset.c = c.id;
-  if (c.color) b.style.setProperty("--c", `var(${c.color})`);
-  b.innerHTML = `${c.color ? '<span class="dot"></span>' : ""}${c.name}<span class="n"></span>`;
-  b.onclick = () => go(year, c.id);
-  catsEl.appendChild(b);
-});
-[yearsEl, catsEl].forEach(g => g.addEventListener("keydown", e => {
+[secsEl, yearsEl, catsEl].forEach(g => g.addEventListener("keydown", e => {
   if (!["ArrowLeft","ArrowRight"].includes(e.key)) return;
   const btns = [...g.querySelectorAll("button")], i = btns.indexOf(document.activeElement);
   const nb = btns[i + (e.key === "ArrowRight" ? 1 : -1)]; if (nb) { nb.click(); nb.focus(); }
 }));
+function moveMarks(){
+  const s = $("sec-" + sec.id);
+  secLine.style.width = s.offsetWidth + "px"; secLine.style.transform = `translateX(${s.offsetLeft}px)`;
+  const y = yearsEl.querySelector(`[data-y="${year}"]`);
+  yrPill.style.width = y.offsetWidth + "px"; yrPill.style.transform = `translateX(${y.offsetLeft}px)`;
+}
+function buildCats(){
+  catsEl.innerHTML = "";
+  if (!sec.cats) return;
+  [{id:"all", name:"All"}, ...sec.cats].forEach(c => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.type = "button"; b.dataset.c = c.id;
+    if (c.color) b.style.setProperty("--c", `var(${c.color})`);
+    b.innerHTML = `${c.color ? '<span class="dot"></span>' : ""}${c.name}<span class="n"></span>`;
+    b.onclick = () => go(sec.id, year, c.id);
+    catsEl.appendChild(b);
+  });
+}
 
-/* routing: #2025 or #2025-activities */
-function go(y, c){ location.hash = c === "all" ? `${y}` : `${y}-${c}`; }
+/* routing: #activities-2025 or #activities-2025-csr */
+function go(s, y, c){ location.hash = c && c !== "all" ? `${s}-${y}-${c}` : `${s}-${y}`; }
 function parse(){
-  const m = location.hash.slice(1).match(/^(\d{4})(?:-([a-z]+))?$/);
-  const y = m && YEARS.includes(+m[1]) ? +m[1] : defaultYear();
-  const c = m && CATS.some(k => k.id === m[2]) ? m[2] : "all";
-  return [y, c];
+  const m = location.hash.slice(1).match(/^([a-z]+)-(\d{4})(?:-([a-z-]+))?$/);
+  const s = SECTIONS.find(x => m && x.id === m[1]) || SECTIONS.find(x => secTotal(x)) || SECTIONS[0];
+  const y = m && YEARS.includes(+m[2]) ? +m[2] : latestYear(s);
+  const c = m && s.cats && s.cats.some(k => k.id === m[3]) ? m[3] : "all";
+  return [s, y, c];
 }
 function apply(first){
-  const [y, c] = parse();
-  const dir = y < year ? "r" : y > year ? "l" : "";
-  year = y; cat = c;
+  const [s, y, c] = parse();
+  const secChanged = s !== sec;
+  const dir = secChanged ? "" : y < year ? "r" : y > year ? "l" : "";
+  sec = s; year = y; cat = c;
+  if (first || secChanged) { buildCats(); catwrap.hidden = !sec.cats; catwrap.style.animation = "none"; catwrap.offsetWidth; catwrap.style.animation = ""; }
+
+  secsEl.querySelectorAll(".sec").forEach(b => {
+    const on = b.dataset.s === sec.id; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1;
+  });
   yearsEl.querySelectorAll(".yr").forEach(b => {
-    const on = +b.dataset.y === year, n = yearCount(+b.dataset.y);
-    b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", `${b.dataset.y}, ${n} photo${n === 1 ? "" : "s"}`);
+    const yy = +b.dataset.y, on = yy === year, n = secPhotos(sec, yy).length;
+    b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", `${yy}, ${n} photo${n === 1 ? "" : "s"}`);
     if (on) b.scrollIntoView({block:"nearest", inline:"nearest"});
   });
   catsEl.querySelectorAll(".chip").forEach(b => {
-    const id = b.dataset.c, n = id === "all" ? yearCount(year) : inYear(CATS.find(k => k.id === id), year).length;
+    const id = b.dataset.c, n = id === "all" ? secPhotos(sec, year).length : catPhotos(sec.cats.find(k => k.id === id), year).length;
     b.querySelector(".n").textContent = n;
     b.classList.toggle("zero", n === 0);
     b.setAttribute("aria-pressed", id === cat);
     if (id === cat) b.scrollIntoView({block:"nearest", inline:"nearest"});
   });
-  movePill();
+  grid.setAttribute("aria-labelledby", "sec-" + sec.id);
+  moveMarks();
   if (first || reduce) { render(); return; }
   clearTimeout(swapT);
   grid.classList.add("out"); if (dir) grid.classList.add(dir);
   swapT = setTimeout(() => { render(); grid.classList.remove("out","l","r"); }, 220);
 }
+function label(){
+  const c = sec.cats && cat !== "all" ? sec.cats.find(k => k.id === cat) : null;
+  return c && c.name !== sec.name ? `${sec.name} · ${c.name}` : sec.name;
+}
 function render(){
-  photos = cat === "all" ? allOf(year) : inYear(CATS.find(k => k.id === cat), year);
+  photos = sec.cats && cat !== "all" ? catPhotos(sec.cats.find(k => k.id === cat), year) : secPhotos(sec, year);
   grid.innerHTML = "";
   if (!photos.length){
-    const name = cat === "all" ? "" : CATS.find(k => k.id === cat).name + " ";
-    grid.innerHTML = `<div class="empty"><div class="ring">✿</div><b>${name}${year}</b><span>Photos coming soon</span></div>`;
+    grid.innerHTML = `<div class="empty"><div class="ring">✿</div><b>${label()} ${year}</b><span>Photos coming soon</span></div>`;
     return;
   }
+  const showTag = sec.cats && cat === "all";
   photos.forEach((p, n) => {
     const b = document.createElement("button"); b.type = "button"; b.style.setProperty("--i", n);
-    b.style.setProperty("--c", `var(${p.c.color})`);
-    b.setAttribute("aria-label", `Open ${p.c.name} ${year} photo ${n+1}`);
-    b.innerHTML = `<img src="thumbs/${p.f}.jpg" alt="${p.c.name} ${year} photo ${n+1}" loading="lazy">${cat === "all" ? `<span class="tag"><i></i>${p.c.name}</span>` : ""}`;
+    if (p.color) b.style.setProperty("--c", `var(${p.color})`);
+    b.setAttribute("aria-label", `Open ${p.label} ${year} photo ${n+1}`);
+    b.innerHTML = `<img src="thumbs/${p.f}.jpg" alt="${p.label} ${year} photo ${n+1}" loading="lazy">${showTag ? `<span class="tag"><i></i>${p.label}</span>` : ""}`;
     b.onclick = () => open(n);
     grid.appendChild(b);
   });
 }
 addEventListener("hashchange", () => apply(false));
-addEventListener("resize", movePill);
-document.fonts && document.fonts.ready.then(movePill);
+addEventListener("resize", moveMarks);
+document.fonts && document.fonts.ready.then(moveMarks);
 
 /* viewer */
 function open(n){
@@ -245,9 +292,9 @@ function open(n){
 function show(n, instant){
   const N = photos.length; idx = (n + N) % N; const p = photos[idx];
   big.classList.remove("zoom");
-  const swap = () => { big.src = `images/${p.f}.jpg`; big.alt = `${p.c.name} ${year} photo ${idx+1}`; big.onload = () => big.classList.remove("fade"); };
+  const swap = () => { big.src = `images/${p.f}.jpg`; big.alt = `${p.label} ${year} photo ${idx+1}`; big.onload = () => big.classList.remove("fade"); };
   if (instant) swap(); else { big.classList.add("fade"); setTimeout(swap, 160); }
-  $("count").textContent = `${p.c.name} ${year} · ${idx+1} / ${N}`;
+  $("count").textContent = `${sec.name}${p.label !== sec.name ? " · " + p.label : ""} ${year} · ${idx+1} / ${N}`;
   [...strip.children].forEach((b, i) => b.setAttribute("aria-current", i === idx));
   strip.children[idx] && strip.children[idx].scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
   if (timer) restartProgress();
